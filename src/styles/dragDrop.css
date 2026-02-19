@@ -1,0 +1,133 @@
+/**
+ * Drag-and-drop styles for goal reordering
+ * Includes dragging effects, visual gaps, animations, and keyboard accessibility
+ */
+
+:root {
+  --goal-card-height: 8rem;
+  --goal-gap-size: 0.5rem;
+  --drag-transition-duration: 250ms;
+  --drag-transition-timing: ease-out;
+}
+
+/**
+ * Base transition for goal cards
+ * Smooth movement when reordering
+ */
+.goal-card {
+  transition: transform var(--drag-transition-duration) var(--drag-transition-timing),
+              opacity var(--drag-transition-duration) var(--drag-transition-timing);
+}
+
+/**
+ * Dragging state - goal being dragged
+ */
+.goal-card.dragging {
+  opacity: 0.5;
+  transform: scale(1.02);
+  z-index: 1000;
+  cursor: grabbing;
+}
+
+/**
+ * Keyboard reorder mode - goal in keyboard reordering
+ */
+.goal-card.keyboard-reorder-mode {
+  outline: 3px solid #0d6efd;
+  outline-offset: 2px;
+  background-color: #f0f7ff;
+}
+
+/**
+ * Shift up animation - goals moving up to make room
+ */
+.goal-card.shift-up {
+  transform: translateY(calc(-1 * var(--goal-card-height) - var(--goal-gap-size)));
+}
+
+/**
+ * Shift down animation - goals moving down to make room
+ */
+.goal-card.shift-down {
+  transform: translateY(calc(var(--goal-card-height) + var(--goal-gap-size)));
+}
+
+/**
+ * Grab cursor for goal cards (indicates draggable)
+ */
+.goal-card {
+  cursor: grab;
+}
+
+.goal-card:active {
+  cursor: grabbing;
+}
+
+/**
+ * Focus visible state for keyboard navigation
+ */
+.goal-card:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
+/**
+ * Visual indicator when drag is in progress
+ */
+body.drag-in-progress {
+  user-select: none;
+}
+
+body.drag-in-progress * {
+  cursor: grabbing !important;
+}
+
+/**
+ * Goals list drag-drop container
+ */
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/**
+ * Visually hidden class for screen reader announcements
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/**
+ * ARIA live region for keyboard reorder announcements
+ */
+.aria-live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/**
+ * Responsive adjustments for keyboard navigation on smaller screens
+ */
+@media (max-width: 768px) {
+  .goal-card:focus-visible {
+    outline-width: 3px;
+  }
+
+  .goal-card.keyboard-reorder-mode {
+    outline-width: 4px;
+    outline-offset: 4px;
+  }
+}
+

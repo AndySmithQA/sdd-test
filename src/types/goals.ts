@@ -29,6 +29,9 @@ export interface Goal {
 
   /** Date when goal was created (auto-generated, UTC ISO string in storage) */
   createdDate: Date;
+
+  /** Display order rank within status column (0-based index, auto-assigned) */
+  displayOrder: number;
 }
 
 /**

@@ -31,6 +31,7 @@ interface StorageSchema {
 function deserializeGoal(stored: StoredGoal): Goal {
   return {
     ...stored,
+    displayOrder: stored.displayOrder ?? 0, // Default to 0 if missing (for backward compatibility)
     endDate: new Date(stored.endDate),
     createdDate: new Date(stored.createdDate),
   };
@@ -48,7 +49,36 @@ function serializeGoal(goal: Goal): StoredGoal {
 }
 
 /**
+ * Migrate goals to include displayOrder field if missing
+ * Assigns order based on createdDate (oldest goals get lower order numbers)
+ */
+function migrateGoalsToDisplayOrder(goals: Goal[]): Goal[] {
+  // Group goals by status
+  const byStatus: { [key: string]: Goal[] } = {
+    active: goals.filter(g => g.status === 'active'),
+    completed: goals.filter(g => g.status === 'completed'),
+  };
+
+  // Assign displayOrder within each status group
+  Object.keys(byStatus).forEach(status => {
+    // Sort by createdDate to determine order
+    byStatus[status].sort((a, b) => 
+      new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+    );
+    
+    // Assign sequential displayOrder
+    byStatus[status].forEach((goal, index) => {
+      goal.displayOrder = index;
+    });
+  });
+
+  // Combine back into a single array
+  return [...byStatus.active, ...byStatus.completed];
+}
+
+/**
  * Retrieve all goals from localStorage
+ * Runs migration if needed, sorts by displayOrder within each status group
  * Returns empty array if storage is empty or corrupted
  */
 export function getAllGoals(): Goal[] {
@@ -73,14 +103,38 @@ export function getAllGoals(): Goal[] {
       return [];
     }
 
-    return schema.goals.map((goal) => {
+    let goals = schema.goals.map((goal: any) => {
       try {
-        return deserializeGoal(goal);
+        // Ensure displayOrder exists (for backward compatibility with old storage format)
+        const goalWithOrder = {
+          ...goal,
+          displayOrder: goal.displayOrder ?? 0,
+        } as StoredGoal;
+        return deserializeGoal(goalWithOrder);
       } catch (error) {
         console.error('Failed to deserialize goal:', goal, error);
         return null;
       }
     }).filter((goal): goal is Goal => goal !== null);
+
+    // Run migration if any goals have displayOrder of 0 without explicit ordering
+    const needsMigration = goals.some(g => g.displayOrder === undefined || (goals.every(gr => gr.displayOrder === 0 && gr.status === g.status)));
+    if (needsMigration && goals.length > 0) {
+      console.info('Running displayOrder migration...');
+      goals = migrateGoalsToDisplayOrder(goals);
+      // Persist migrated goals back to storage
+      saveGoals(goals);
+    }
+
+    // Sort by displayOrder within each status group
+    goals.sort((a, b) => {
+      if (a.status !== b.status) {
+        return a.status === 'active' ? -1 : 1; // active first
+      }
+      return a.displayOrder - b.displayOrder;
+    });
+
+    return goals;
   } catch (error) {
     console.error('Failed to retrieve goals from localStorage:', error);
     return [];
