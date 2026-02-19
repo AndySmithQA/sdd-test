@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: doit Goals API (Local Contract)
+  version: 1.0.0
+  description: |
+    Local data contract for goals stored in browser localStorage.
+    These endpoints represent the expected CRUD operations even though
+    persistence is client-side only.
+servers:
+  - url: http://localhost
+paths:
+  /goals:
+    get:
+      summary: List active and completed goals
+      responses:
+        "200":
+          description: List of goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+    post:
+      summary: Create a new goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalCreate"
+      responses:
+        "201":
+          description: Created goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+  /goals/{goalId}:
+    put:
+      summary: Update goal details or status
+      parameters:
+        - in: path
+          name: goalId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalUpdate"
+      responses:
+        "200":
+          description: Updated goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    delete:
+      summary: Delete a goal
+      parameters:
+        - in: path
+          name: goalId
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+components:
+  schemas:
+    Goal:
+      type: object
+      required:
+        - id
+        - title
+        - endDate
+        - status
+        - createdDate
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [active, completed]
+        createdDate:
+          type: string
+          format: date
+    GoalCreate:
+      type: object
+      required:
+        - title
+        - endDate
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        endDate:
+          type: string
+          format: date
+    GoalUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [active, completed]
