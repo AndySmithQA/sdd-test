@@ -10,6 +10,15 @@ export interface GoalCardProps {
   goal: GoalWithDerivedFields;
   onComplete?: (goalId: string) => void;
   onDelete?: (goalId: string) => void;
+  className?: string;
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseMove?: (e: React.MouseEvent) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onBlur?: () => void;
+  tabIndex?: number;
+  role?: string;
+  ariaLabel?: string;
+  ariaPressed?: boolean;
 }
 
 /**
@@ -19,6 +28,14 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   goal,
   onComplete,
   onDelete,
+  className,
+  onMouseDown,
+  onMouseMove,
+  onKeyDown,
+  onBlur,
+  tabIndex,
+  role,
+  ariaLabel: ariaLabelProp,
 }) => {
   // Format days remaining for display
   const getDaysRemainingText = (): { text: string; className: string } => {
@@ -50,7 +67,16 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   };
 
   return (
-    <div className={getCardClasses()} role="article" aria-label={`Goal: ${goal.title}`}>
+    <div 
+      className={`${getCardClasses()} ${className || ''}`.trim()} 
+      role={role || "article"} 
+      aria-label={ariaLabelProp || `Goal: ${goal.title}`}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onKeyDown={onKeyDown}
+      onBlur={onBlur}
+      tabIndex={tabIndex}
+    >
       {/* Checkbox for completion */}
       <div className="d-flex align-items-flex-start gap-2">
         <input

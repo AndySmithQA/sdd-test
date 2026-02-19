@@ -6,6 +6,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { Goal, GoalWithDerivedFields, CreateGoalInput, UpdateGoalInput } from '../types/goals';
+import type { ReorderOperation } from '../types/dragDrop';
 import {
   getAllGoals,
   saveGoals,
@@ -13,6 +14,7 @@ import {
   updateGoal as storageUpdateGoal,
   deleteGoal as storageDeleteGoal,
 } from '../data/goalsStorage';
+import { reorderGoals as reorderGoalsUtil } from '../data/orderUtils';
 import { differenceInCalendarDays, startOfDay } from 'date-fns';
 
 /**
@@ -73,6 +75,9 @@ export interface UseGoalsReturn {
   /** Mark goal as completed */
   completeGoal: (goalId: string) => void;
 
+  /** Reorder goals within a status group */
+  reorderGoals: (operation: ReorderOperation) => void;
+
   /** Get single goal with derived fields */
   getGoal: (goalId: string) => GoalWithDerivedFields | undefined;
 
@@ -127,6 +132,13 @@ export function useGoals(): UseGoalsReturn {
 
   const addGoal = useCallback((input: CreateGoalInput) => {
     try {
+      // Calculate displayOrder for new goal
+      // New active goals get the highest order number
+      const activeGoals = goals.filter(g => g.status === 'active');
+      const maxOrder = activeGoals.length > 0
+        ? Math.max(...activeGoals.map(g => g.displayOrder))
+        : -1;
+
       const newGoal: Goal = {
         id: generateGoalId(),
         title: input.title,
@@ -134,6 +146,7 @@ export function useGoals(): UseGoalsReturn {
         endDate: new Date(input.endDate),
         status: 'active',
         createdDate: new Date(),
+        displayOrder: maxOrder + 1,
       };
 
       const withDerived = computeDerivedFields(newGoal);
@@ -147,7 +160,7 @@ export function useGoals(): UseGoalsReturn {
       setError(message);
       console.error('Failed to add goal:', err);
     }
-  }, []);
+  }, [goals]);
 
   const updateGoal = useCallback((goalId: string, updates: UpdateGoalInput) => {
     try {
@@ -187,6 +200,29 @@ export function useGoals(): UseGoalsReturn {
     updateGoal(goalId, { status: 'completed' });
   }, [updateGoal]);
 
+  const reorderGoals = useCallback((operation: ReorderOperation) => {
+    try {
+      const result = reorderGoalsUtil(goals as Goal[], operation);
+      
+      if (!result.success) {
+        setError(result.error || 'Reorder operation failed');
+        return;
+      }
+
+      // Update local state with reordered goals and derived fields
+      const withDerived = result.goals.map(computeDerivedFields);
+      setGoals(withDerived);
+
+      // Persist to storage
+      saveGoals(result.goals);
+      setError(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to reorder goals';
+      setError(message);
+      console.error('Failed to reorder goals:', err);
+    }
+  }, [goals]);
+
   const deleteGoal = useCallback((goalId: string) => {
     try {
       setGoals((prev) => prev.filter((g) => g.id !== goalId));
@@ -223,6 +259,7 @@ export function useGoals(): UseGoalsReturn {
     addGoal,
     updateGoal,
     completeGoal,
+    reorderGoals,
     deleteGoal,
     getGoal,
     clearAllGoals,

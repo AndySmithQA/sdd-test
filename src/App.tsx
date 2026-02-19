@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/theme.css';
+import './styles/dragDrop.css';
 import './App.css';
 
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import Header from './components/Header';
 import GoalFormModal from './components/GoalFormModal';
 import GoalColumn from './components/GoalColumn';
 import type { CreateGoalInput } from './types/goals';
+import type { ReorderOperation } from './types/dragDrop';
 
 /**
  * Main App component
@@ -15,7 +17,7 @@ import type { CreateGoalInput } from './types/goals';
  * Manages goal creation modal state and deletion confirmations
  */
 export default function App() {
-  const { activeGoals, completedGoals, isLoading, error, addGoal, completeGoal, deleteGoal } = useGoals();
+  const { activeGoals, completedGoals, isLoading, error, addGoal, completeGoal, deleteGoal, reorderGoals } = useGoals();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | undefined>();
@@ -56,6 +58,10 @@ export default function App() {
     if (window.confirm('Are you sure you want to delete this goal? This action cannot be undone.')) {
       deleteGoal(goalId);
     }
+  };
+
+  const handleReorderGoals = (operation: ReorderOperation) => {
+    reorderGoals(operation);
   };
 
   return (
@@ -107,6 +113,7 @@ export default function App() {
                 badgeColor="primary"
                 onComplete={handleCompleteGoal}
                 onDelete={handleDeleteGoal}
+                onReorder={handleReorderGoals}
                 emptyMessage="No active goals yet. Click 'Add Goal' to get started!"
               />
             </div>
@@ -118,6 +125,7 @@ export default function App() {
                 title="Completed Goals"
                 badgeColor="success"
                 onDelete={handleDeleteGoal}
+                onReorder={handleReorderGoals}
                 emptyMessage="No completed goals yet. Complete your first goal!"
               />
             </div>
