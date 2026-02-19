@@ -1,0 +1,203 @@
+/* Theme variables - Pastel color palette for doit goal tracking app */
+
+:root {
+  /* Pastel base colors - light, pleasant, non-intrusive */
+  --color-primary: #6c9bd1;        /* Soft blue for primary actions */
+  --color-primary-light: #e8f1f8;  /* Very light blue background */
+  
+  /* Goal status colors - pastel palette for visual distinction */
+  --color-goal-normal: #f0f8e8;    /* Very light pastel green */
+  --color-goal-normal-border: #d4e8c8;
+  
+  --color-goal-due-soon: #fff3cd;  /* Pastel yellow/amber for urgency */
+  --color-goal-due-soon-darker: #ffeaa7;
+  --color-goal-due-soon-border: #ffe0a1;
+  
+  --color-goal-overdue: #ffe8e8;   /* Pastel red/coral for overdue */
+  --color-goal-overdue-border: #ffc9c9;
+  
+  /* Text and UI elements */
+  --color-text-primary: #2c3e50;   /* Dark blue-gray for main text */
+  --color-text-secondary: #5d7a94; /* Medium gray-blue for secondary */
+  --color-text-light: #8a9bb8;     /* Light gray-blue for tertiary */
+  
+  --color-white: #ffffff;
+  --color-background: #fafbfc;     /* Very light almost-white background */
+  --color-border: #d4d9e0;         /* Light gray for borders */
+  
+  /* Feedback colors */
+  --color-success: #a8d5ba;        /* Pastel green for success/completed */
+  --color-danger: #f0a0a0;         /* Pastel red for danger/delete */
+  --color-warning: #f5d76e;        /* Pastel yellow for warning */
+  
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+}
+
+/* Dark mode alternative (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #ecf0f1;
+    --color-text-secondary: #bdc3c7;
+    --color-background: #1a1a1a;
+  }
+}
+
+/* Global styles */
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  line-height: 1.5;
+}
+
+/* Goal card styling - base state (active/normal) */
+.goal-card {
+  background-color: var(--color-goal-normal);
+  border: 1px solid var(--color-goal-normal-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.goal-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.goal-card.completed {
+  opacity: 0.7;
+  background-color: #f5f5f5;
+}
+
+.goal-card.completed .goal-title {
+  text-decoration: line-through;
+  color: var(--color-text-light);
+}
+
+/* Goal status indicators - due soon highlighting */
+.goal-card.due-soon {
+  background-color: var(--color-goal-due-soon);
+  border-color: var(--color-goal-due-soon-border);
+  border-width: 2px;
+}
+
+.goal-card.due-soon .goal-days-remaining {
+  color: #d97706;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Goal status indicators - overdue highlighting */
+.goal-card.overdue {
+  background-color: var(--color-goal-overdue);
+  border-color: var(--color-goal-overdue-border);
+  border-width: 2px;
+}
+
+.goal-card.overdue .goal-days-remaining {
+  color: #dc2626;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Goal card content */
+.goal-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 8px 0;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.goal-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 8px 0;
+  max-height: 100px;
+  overflow-y: auto;
+  word-break: break-word;
+}
+
+.goal-days-remaining {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin-top: 12px;
+}
+
+.goal-days-remaining.today {
+  color: #f59e0b;
+  font-weight: var(--font-weight-bold);
+}
+
+.goal-days-remaining.overdue {
+  color: #dc2626;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Goal actions */
+.goal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.goal-btn {
+  padding: 6px 12px;
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: var(--font-weight-medium);
+  min-height: 36px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goal-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.goal-btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.goal-btn-secondary {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.goal-btn-secondary:hover {
+  background-color: #c5cdd5;
+}
+
+.goal-btn-danger {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+}
+
+.goal-btn-danger:hover {
+  background-color: #e88888;
+}
+
+.goal-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
