@@ -5,19 +5,22 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios *(mandatory)*
 
 <!--
   IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
+  Each user story/journey must be INDEPENDENTLY VERIFIABLE - meaning if you implement just ONE of them,
   you should still have a viable MVP (Minimum Viable Product) that delivers value.
   
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
   Think of each story as a standalone slice of functionality that can be:
   - Developed independently
-  - Tested independently
+  - Verified independently via manual walkthroughs
   - Deployed independently
   - Demonstrated to users independently
+  
+  NOTE: Per project constitution, verification is manual. Developers and reviewers will walk through
+  user journeys to verify acceptance scenarios work as intended.
 -->
 
 ### User Story 1 - [Brief Title] (Priority: P1)
@@ -26,7 +29,7 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
+**Manual Verification**: [Describe how this can be verified independently - e.g., "Can be verified by [specific action] and delivers [specific value]"]
 
 **Acceptance Scenarios**:
 
@@ -41,7 +44,7 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently]
+**Manual Verification**: [Describe how this can be verified independently via manual walkthrough]
 
 **Acceptance Scenarios**:
 
@@ -55,15 +58,11 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently]
+**Manual Verification**: [Describe how this can be verified independently via manual walkthrough]
 
 **Acceptance Scenarios**:
 
 1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-
----
-
-[Add more user stories as needed, each with an assigned priority]
 
 ### Edge Cases
 
